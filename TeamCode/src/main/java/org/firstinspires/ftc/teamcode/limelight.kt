@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.subsystems
 import android.util.Half.abs
 // import com.acmerobotics.dashboard.config.Config
 import com.pedropathing.geometry.Pose
+import com.qualcomm.hardware.limelightvision.LLResult
+import com.qualcomm.hardware.limelightvision.LLResultTypes
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
 import com.qualcomm.robotcore.hardware.HardwareMap
@@ -61,6 +63,42 @@ class limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
     fun switchPipeline(pipeline: Int) {
         limelight.pipelineSwitch(pipeline)
     }
+
+    /**
+     * Checks if a color or object is detected in the current pipeline.
+     * @param className Optional class name for neural network detector pipelines.
+     * @return true if a target is detected, false otherwise.
+     */
+    fun isColorDetected(className: String? = null): Boolean {
+        val llResult = limelight.latestResult
+        if (llResult == null || !llResult.isValid) return false
+
+        if (className != null) {
+            return llResult.detectorResults.any { it.className.equals(className, ignoreCase = true) }
+        }
+
+        return llResult.colorResults.isNotEmpty() || llResult.detectorResults.isNotEmpty()
+    }
+
+    /**
+     * Returns the horizontal and vertical offset angles of the detected color target.
+     * @return Pair of (tx, ty) in degrees, or null if no target is found.
+     */
+    fun getColorTargetAngles(): Pair<Double, Double>? {
+        val llResult = limelight.latestResult
+        if (llResult != null && llResult.isValid) {
+            if (llResult.colorResults.isNotEmpty()) {
+                val target = llResult.colorResults[0]
+                return Pair(target.targetXDegrees, target.targetYDegrees)
+            } else if (llResult.detectorResults.isNotEmpty()) {
+                val target = llResult.detectorResults[0]
+                // Note: DetectorResult also has targetXDegrees and targetYDegrees in the API
+                return Pair(target.targetXDegrees, target.targetYDegrees)
+            }
+        }
+        return null
+    }
+
     fun getDistanceFromTag(): Pair<Double, Double>? { // uses Ta, pretty unreliable
         val llResult = limelight.latestResult
         // cos(Ty) = linearDistance / hypotenuse
