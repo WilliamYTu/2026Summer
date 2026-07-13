@@ -1,28 +1,19 @@
 package org.firstinspires.ftc.teamcode.subsystems
 
-import android.util.Half.abs
-// import com.acmerobotics.dashboard.config.Config
 import com.pedropathing.geometry.Pose
-import com.qualcomm.hardware.limelightvision.LLResult
-import com.qualcomm.hardware.limelightvision.LLResultTypes
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.IMU
 import org.firstinspires.ftc.robotcore.external.Telemetry
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sqrt
 
-// @Config
 class limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) {
     private lateinit var limelight: Limelight3A
     private lateinit var imu: IMU
     private val k = 75.78304131
-    private val cameraHeight = 13
-    public val limelightWeightX = Companion.limelightWeightX
-    public val limelightWeightY = Companion.limelightWeightY
     var state = LimelightState.OFF;
 
 
