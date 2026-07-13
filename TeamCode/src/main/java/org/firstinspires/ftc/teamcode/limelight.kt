@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems
+package org.firstinspires.ftc.teamcode
 
 import com.pedropathing.geometry.Pose
 import com.qualcomm.hardware.limelightvision.Limelight3A
@@ -8,9 +8,10 @@ import com.qualcomm.robotcore.hardware.IMU
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import kotlin.math.abs
 import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.math.sqrt
 
-class limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) {
+class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) {
     private lateinit var limelight: Limelight3A
     private lateinit var imu: IMU
     private val k = 75.78304131
@@ -197,8 +198,8 @@ class limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
 
 
     fun invertPose(p: Pose): Pose {
-        val cos = kotlin.math.cos(p.heading)
-        val sin = kotlin.math.sin(p.heading)
+        val cos = cos(p.heading)
+        val sin = sin(p.heading)
 
         val xInv = -(cos * p.x + sin * p.y)
         val yInv = sin * p.x - cos * p.y
