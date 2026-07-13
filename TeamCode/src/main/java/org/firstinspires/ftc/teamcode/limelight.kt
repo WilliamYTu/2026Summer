@@ -1,26 +1,34 @@
 package org.firstinspires.ftc.teamcode
 
-import com.pedropathing.geometry.Pose
+import com.qualcomm.hardware.limelightvision.LLResult
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.IMU
+import com.qualcomm.robotcore.hardware.Servo
+import com.qualcomm.robotcore.hardware.ServoImplEx
 import org.firstinspires.ftc.robotcore.external.Telemetry
-import kotlin.math.abs
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
 
 class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) {
     private lateinit var limelight: Limelight3A
     private lateinit var imu: IMU
-    private val k = 75.78304131
-    var state = LimelightState.OFF;
+    // private val k = 75.78304131
+    var state = LimelightState.OFF
 
 
 
     fun initLimelight() {
         limelight = hardwareMap.get(Limelight3A::class.java, "Ethernet Device")
+
+        val limelightServo = (hardwareMap["limelightServo"] as ServoImplEx).apply {
+            direction = Servo.Direction.FORWARD
+            // pwmRange = PwmControl.PwmRange(520.0, 2480.0)
+        }
+
+
+        fun limelightServoPos(pos: Double){
+            limelightServo.position = pos
+        }
 
         limelight.pipelineSwitch(1)
 
@@ -48,32 +56,39 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
         limelight.pipelineSwitch(pipeline)
     }
 
-    fun isColorDetected(className: String? = null): Boolean {
-        val llResult = limelight.latestResult
-        if (llResult == null || !llResult.isValid) return false
+    fun detectBalls() {
+        val result: LLResult? = limelight.latestResult
 
-        if (className != null) {
-            return llResult.detectorResults.any { it.className.equals(className, ignoreCase = true) }
-        }
+        if (result != null && result.isValid) {
+            // ---- Channel 1: built-in angle to the CLOSEST ball (either color) ----
+            val tx = result.tx  // degrees, + = right of crosshair
+            val ty = result.ty  // degrees, + = above crosshair
 
-        return llResult.colorResults.isNotEmpty() || llResult.detectorResults.isNotEmpty()
-    }
+            // ---- Channel 2: your custom array ----
+            val py = result.pythonOutput  // DoubleArray?, matches llpython
+            if (py != null && py.size >= 8) {
+                val totalBalls   = py[0].toInt()
+                val purpleCount  = py[1].toInt()
+                val purpleX      = py[2]  // pixel coords, NOT degrees
+                val purpleY      = py[3]
+                val greenCount   = py[4].toInt()
+                val greenX       = py[5]
+                val greenY       = py[6]
 
-    fun getColorTargetAngles(): Pair<Double, Double>? {
-        val llResult = limelight.latestResult
-        if (llResult != null && llResult.isValid) {
-            if (llResult.colorResults.isNotEmpty()) {
-                val target = llResult.colorResults[0]
-                return Pair(target.targetXDegrees, target.targetYDegrees)
-            } else if (llResult.detectorResults.isNotEmpty()) {
-                val target = llResult.detectorResults[0]
-                // Note: DetectorResult also has targetXDegrees and targetYDegrees in the API
-                return Pair(target.targetXDegrees, target.targetYDegrees)
+                telemetry.addData("Total balls", totalBalls)
+                telemetry.addData("Purple", "count=$purpleCount x=$purpleX y=$purpleY")
+                telemetry.addData("Green", "count=$greenCount x=$greenX y=$greenY")
             }
+
+            telemetry.addData("Closest ball tx", tx)
+            telemetry.addData("Closest ball ty", ty)
+        } else {
+            telemetry.addData("Limelight", "no valid result")
         }
-        return null
+
+        telemetry.update()
     }
-    
+
     enum class LimelightState {
         ON, OFF
     }

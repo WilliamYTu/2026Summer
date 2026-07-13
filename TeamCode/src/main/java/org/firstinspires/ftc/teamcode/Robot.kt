@@ -23,4 +23,7 @@ class Robot( val hardwareMap: HardwareMap, val telemetry: Telemetry) {
         limelight.switchPipeline(pipeline)
     }
 
+    fun detectBalls(){
+        limelight.detectBalls()
+    }
 }
