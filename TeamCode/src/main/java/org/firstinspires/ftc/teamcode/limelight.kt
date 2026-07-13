@@ -21,7 +21,7 @@ class limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
     fun initLimelight() {
         limelight = hardwareMap.get(Limelight3A::class.java, "Ethernet Device")
 
-        limelight.pipelineSwitch(0)
+        limelight.pipelineSwitch(1)
 
         imu = hardwareMap.get(IMU::class.java, "imu")
 
