@@ -64,11 +64,6 @@ class limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
         limelight.pipelineSwitch(pipeline)
     }
 
-    /**
-     * Checks if a color or object is detected in the current pipeline.
-     * @param className Optional class name for neural network detector pipelines.
-     * @return true if a target is detected, false otherwise.
-     */
     fun isColorDetected(className: String? = null): Boolean {
         val llResult = limelight.latestResult
         if (llResult == null || !llResult.isValid) return false
@@ -80,10 +75,6 @@ class limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
         return llResult.colorResults.isNotEmpty() || llResult.detectorResults.isNotEmpty()
     }
 
-    /**
-     * Returns the horizontal and vertical offset angles of the detected color target.
-     * @return Pair of (tx, ty) in degrees, or null if no target is found.
-     */
     fun getColorTargetAngles(): Pair<Double, Double>? {
         val llResult = limelight.latestResult
         if (llResult != null && llResult.isValid) {
