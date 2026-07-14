@@ -25,6 +25,8 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
 
         limelight.pipelineSwitch(1)
 
+        limelightServoPos(1500.0)
+
         imu = hardwareMap.get(IMU::class.java, "imu")
 
         val revHubOrientationOnRobot = RevHubOrientationOnRobot(
