@@ -65,7 +65,7 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
 
             // ---- Channel 2: your custom array ----
             val py = result.pythonOutput  // DoubleArray?, matches llpython
-            if (py != null && py.size >= 8) {
+            if (py != null && py.size >= 4) {
                 val totalBalls   = py[0].toInt()
                 val yellowCount  = py[1].toInt()
                 val yellowX      = py[2]  // pixel coords, NOT degrees
