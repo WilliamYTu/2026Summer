@@ -15,20 +15,13 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
     // private val k = 75.78304131
     var state = LimelightState.OFF
 
-
+    val limelightServo = (hardwareMap["limelightServo"] as ServoImplEx).apply {
+        direction = Servo.Direction.FORWARD
+        // pwmRange = PwmControl.PwmRange(520.0, 2480.0)
+    }
 
     fun initLimelight() {
         limelight = hardwareMap.get(Limelight3A::class.java, "Ethernet Device")
-
-        val limelightServo = (hardwareMap["limelightServo"] as ServoImplEx).apply {
-            direction = Servo.Direction.FORWARD
-            // pwmRange = PwmControl.PwmRange(520.0, 2480.0)
-        }
-
-
-        fun limelightServoPos(pos: Double){
-            limelightServo.position = pos
-        }
 
         limelight.pipelineSwitch(1)
 
@@ -40,6 +33,10 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
         )
 
         imu.initialize(IMU.Parameters(revHubOrientationOnRobot))
+    }
+
+    fun limelightServoPos(pos: Double){
+        limelightServo.position = pos
     }
 
     fun start(){
@@ -68,16 +65,12 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
             val py = result.pythonOutput  // DoubleArray?, matches llpython
             if (py != null && py.size >= 8) {
                 val totalBalls   = py[0].toInt()
-                val purpleCount  = py[1].toInt()
-                val purpleX      = py[2]  // pixel coords, NOT degrees
-                val purpleY      = py[3]
-                val greenCount   = py[4].toInt()
-                val greenX       = py[5]
-                val greenY       = py[6]
+                val yellowCount  = py[1].toInt()
+                val yellowX      = py[2]  // pixel coords, NOT degrees
+                val yellowY      = py[3]
 
                 telemetry.addData("Total balls", totalBalls)
-                telemetry.addData("Purple", "count=$purpleCount x=$purpleX y=$purpleY")
-                telemetry.addData("Green", "count=$greenCount x=$greenX y=$greenY")
+                telemetry.addData("Purple", "count=$yellowCount x=$yellowX y=$yellowY")
             }
 
             telemetry.addData("Closest ball tx", tx)
