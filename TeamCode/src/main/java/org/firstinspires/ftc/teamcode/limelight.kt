@@ -23,7 +23,7 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
     fun initLimelight() {
         limelight = hardwareMap.get(Limelight3A::class.java, "Ethernet Device")
 
-        limelight.pipelineSwitch(1)
+        limelight.pipelineSwitch(2)
 
         limelightServoPos(1500.0)
 
