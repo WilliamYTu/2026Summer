@@ -59,19 +59,19 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
         val result: LLResult? = limelight.latestResult
 
         if (result != null && result.isValid) {
-            // ---- Channel 1: built-in angle to the CLOSEST ball (either color) ----
-            val tx = result.tx  // degrees, + = right of crosshair
-            val ty = result.ty  // degrees, + = above crosshair
+            // ONLY CLOSEST BALL
+            val tx = result.tx  //+ = right of crosshair
+            val ty = result.ty  //+ = above crosshair
 
-            // ---- Channel 2: your   custom array ----
-            val py = result.pythonOutput  // DoubleArray?, matches llpython
+            // EVERYTHING ELSE
+            val py = result.pythonOutput
             if (py != null && py.size >= 4) {
                 val totalBalls   = py[0].toInt()
-                val yellowCount  = py[1].toInt()
-                val yellowX      = py[2]  // pixel coords, NOT degrees
+                val yellowCount  = py[1].toInt() // same thing as totalBalls, idk why i even coded this
+                val yellowX      = py[2]  // COORDINATES OF PIXELS, NOT POSITION
                 val yellowY      = py[3]
 
-                telemetry.addData("Total balls", totalBalls)
+                // telemetry.addData("Total balls", totalBalls)
                 telemetry.addData("Purple", "count=$yellowCount x=$yellowX y=$yellowY")
             }
 
