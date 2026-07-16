@@ -101,11 +101,11 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
         val result: LLResult? = limelight.getLatestResult()
 
         if (result != null && result.isValid) {
-            val pythonOutput = result.pythonOutput
+            val pythonOutput = result.pythonOutput ?: return emptyList()
 
             val points = pythonOutput.take(8)
                 .chunked(2)
-                .takeWhile { pair -> pair.size == 2 && -999.0 !in pair }
+                .takeWhile { pair -> pair.size == 2 && SAFETY !in pair }
 
             val ballPositions: List<BallPosition> = points.map { pair ->
                 val tx = pair[0]
