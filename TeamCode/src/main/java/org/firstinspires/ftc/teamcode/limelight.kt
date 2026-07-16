@@ -82,6 +82,19 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
         val straightLineDistanceInches: Double
     )
 
+    fun detectBalls(): Int{
+        val result: LLResult? = limelight.getLatestResult()
+        if (result != null && result.isValid) {
+            val pythonOutput = result.pythonOutput
+            val points = pythonOutput.take(8)
+                .chunked(2)
+                .takeWhile { pair -> pair.size == 2 && -999.0 !in pair }
+
+            return points.size
+        }
+        return -1
+    }
+
     data class BallPosition(val forward: Double, val lateral: Double, val distance: Double)
 
     fun displacementFromAngles(): List<BallPosition> {
