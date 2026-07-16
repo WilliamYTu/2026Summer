@@ -54,6 +54,7 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
         limelightServo.position = pos
     }
 
+
     fun getServoPosition(): Double {
         return limelightServo.position
     }
@@ -72,27 +73,13 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
         limelight.pipelineSwitch(pipeline)
     }
 
-
-
-    data class DetectedBall(
-        val tx: Double,
-        val ty: Double,
-        val forwardInches: Double,
-        val lateralInches: Double,
-        val straightLineDistanceInches: Double
-    )
-
-    fun detectBalls(): Int{
-        val result: LLResult? = limelight.getLatestResult()
-        if (result != null && result.isValid) {
-            val pythonOutput = result.pythonOutput
-            val points = pythonOutput.take(8)
-                .chunked(2)
-                .takeWhile { pair -> pair.size == 2 && -999.0 !in pair }
-
-            return points.size
+    fun getBallNumber(): Int{
+        val result = displacementFromAngles()
+        if (result == emptyList<BallPosition>()) {
+            return -1
+        } else {
+            return result.size
         }
-        return -1
     }
 
     data class BallPosition(val forward: Double, val lateral: Double, val distance: Double)
@@ -120,6 +107,37 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
             return ballPositions
         }
         return emptyList()
+    }
+
+    fun returnTelemetry(){
+        val result = displacementFromAngles()
+
+        val firstBall = result.getOrNull(0)
+        val secondBall = result.getOrNull(0)
+        val thirdBall = result.getOrNull(0)
+        val fourthBall = result.getOrNull(0)
+
+
+        if (firstBall != null) {
+            telemetry.addData("Forward: ", firstBall.forward)
+            telemetry.addData("Lateral: ", firstBall.lateral)
+            telemetry.addData("Distance: ", firstBall.distance)
+        }
+        if (secondBall != null) {
+            telemetry.addData("Forward: ", secondBall.forward)
+            telemetry.addData("Lateral: ", secondBall.lateral)
+            telemetry.addData("Distance: ", secondBall.distance)
+        }
+        if (thirdBall != null) {
+            telemetry.addData("Forward: ", thirdBall.forward)
+            telemetry.addData("Lateral: ", thirdBall.lateral)
+            telemetry.addData("Distance: ", thirdBall.distance)
+        }
+        if (fourthBall != null) {
+            telemetry.addData("Forward: ", fourthBall.forward)
+            telemetry.addData("Lateral: ", fourthBall.lateral)
+            telemetry.addData("Distance: ", fourthBall.distance)
+        }
     }
 
 

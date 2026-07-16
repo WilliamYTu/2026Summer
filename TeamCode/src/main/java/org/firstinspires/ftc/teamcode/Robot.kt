@@ -23,7 +23,8 @@ class Robot( val hardwareMap: HardwareMap, val telemetry: Telemetry) {
         limelight.switchPipeline(pipeline)
     }
 
-    fun detectBalls(){
-        limelight.detectBalls()
+    fun changeLimelightPos(change: Double){
+        val previousPos = limelight.getServoPosition()
+        limelight.limelightServoPos(previousPos + change)
     }
 }

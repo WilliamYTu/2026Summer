@@ -16,13 +16,20 @@ class Test : LinearOpMode() {
         waitForStart()
 
         while (opModeIsActive()) {
-            limelight.detectBalls()
-            if (gamepad1.x) {
+            limelight.getBallNumber()
+            if (gamepad1.dpad_down){
+                robot.changeLimelightPos(-100.0)
+            }
+            if (gamepad1.dpad_up){
+                robot.changeLimelightPos(100.0)
+            }
+            if (gamepad1.x){
                 robot.limelightToggle()
             }
 
-            updateTelemetry(telemetry)
             telemetry.addData("Servo position", limelight.getServoPosition())
+            limelight.returnTelemetry()
+            telemetry.update()
         }
     }
 }
