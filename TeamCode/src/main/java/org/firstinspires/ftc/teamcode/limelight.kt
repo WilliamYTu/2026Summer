@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode
 
-import com.bylazar.panels.Panels
 import com.bylazar.configurables.annotations.Configurable
 import com.qualcomm.hardware.limelightvision.LLResult
 import com.qualcomm.hardware.limelightvision.Limelight3A
@@ -21,10 +20,10 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
     private lateinit var limelight: Limelight3A
     private lateinit var imu: IMU
     @JvmField var servoPos = 500.0
-    private  val CAMERA_HEIGHT_INCHES = 8.0
-    private  val CAMERA_ANGLE_DEGREES = 0.0
-    private  val BALL_HEIGHT_INCHES = 2.0     // measure from center of the ball to ground
-    private  val SAFETY = -999.0
+    private  val cameraHeightInches = 8.0
+    private  val cameraAngleDegrees = 0.0
+    private  val ballHeightInches = 2.0     // measure from center of the ball to ground
+    private  val safety = -999.0
     // private val k = 75.78304131
     var state = LimelightState.OFF
 
@@ -69,16 +68,12 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
         limelight.stop()
     }
 
-    fun switchPipeline(pipeline: Int) {
-        limelight.pipelineSwitch(pipeline)
-    }
-
     fun getBallNumber(): Int{
         val result = displacementFromAngles()
-        if (result == emptyList<BallPosition>()) {
-            return -1
+        return if (result == emptyList<BallPosition>()) {
+            -1
         } else {
-            return result.size
+            result.size
         }
     }
 
@@ -92,14 +87,14 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
 
             val points = pythonOutput.take(8)
                 .chunked(2)
-                .takeWhile { pair -> pair.size == 2 && SAFETY !in pair }
+                .takeWhile { pair -> pair.size == 2 && safety !in pair }
 
             val ballPositions: List<BallPosition> = points.map { pair ->
                 val tx = pair[0]
                 val ty = pair[1]
 
-                val angleToTargetRadians = toRadians(CAMERA_ANGLE_DEGREES + ty)
-                val forward = (BALL_HEIGHT_INCHES - CAMERA_HEIGHT_INCHES) / tan(angleToTargetRadians)
+                val angleToTargetRadians = toRadians(cameraAngleDegrees + ty)
+                val forward = (ballHeightInches - cameraHeightInches) / tan(angleToTargetRadians)
                 val lateral = forward * tan(toRadians(tx))
                 val distance = sqrt(forward * forward + lateral * lateral)
                 BallPosition(forward, lateral, distance)
