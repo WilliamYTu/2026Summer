@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode
 
+import com.bylazar.panels.Panels
+import com.bylazar.configurables.annotations.Configurable
 import com.qualcomm.hardware.limelightvision.LLResult
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
@@ -8,10 +10,21 @@ import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.hardware.ServoImplEx
 import org.firstinspires.ftc.robotcore.external.Telemetry
+import java.lang.Math.toRadians
 
+import kotlin.math.tan
+import kotlin.math.sqrt
+// import kotlin.math.toRadians
+
+@Configurable
 class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) {
     private lateinit var limelight: Limelight3A
     private lateinit var imu: IMU
+    @JvmField var servoPos = 500.0
+    private  val CAMERA_HEIGHT_INCHES = 8.0
+    private  val CAMERA_ANGLE_DEGREES = 0.0
+    private  val BALL_HEIGHT_INCHES = 2.0     // measure from center of the ball to ground
+    private  val SAFETY = -999.0
     // private val k = 75.78304131
     var state = LimelightState.OFF
 
@@ -25,7 +38,7 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
 
         limelight.pipelineSwitch(2)
 
-        limelightServoPos(1500.0)
+        limelightServoPos(servoPos)
 
         imu = hardwareMap.get(IMU::class.java, "imu")
 
@@ -39,6 +52,10 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
 
     fun limelightServoPos(pos: Double){
         limelightServo.position = pos
+    }
+
+    fun getServoPosition(): Double {
+        return limelightServo.position
     }
 
     fun start(){
@@ -55,34 +72,44 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
         limelight.pipelineSwitch(pipeline)
     }
 
-    fun detectBalls() {
-        val result: LLResult? = limelight.latestResult
+
+
+    data class DetectedBall(
+        val tx: Double,
+        val ty: Double,
+        val forwardInches: Double,
+        val lateralInches: Double,
+        val straightLineDistanceInches: Double
+    )
+
+    data class BallPosition(val forward: Double, val lateral: Double, val distance: Double)
+
+    fun displacementFromAngles(): List<BallPosition> {
+        val result: LLResult? = limelight.getLatestResult()
 
         if (result != null && result.isValid) {
-            // ONLY CLOSEST BALL
-            val tx = result.tx  //+ = right of crosshair
-            val ty = result.ty  //+ = above crosshair
+            val pythonOutput = result.pythonOutput
 
-            // EVERYTHING ELSE
-            val py = result.pythonOutput
-            if (py != null && py.size >= 4) {
-                val totalBalls   = py[0].toInt()
-                val yellowCount  = py[1].toInt() // same thing as totalBalls, idk why i even coded this
-                val yellowX      = py[2]  // COORDINATES OF PIXELS, NOT POSITION
-                val yellowY      = py[3]
+            val points = pythonOutput.take(8)
+                .chunked(2)
+                .takeWhile { pair -> pair.size == 2 && -999.0 !in pair }
 
-                // telemetry.addData("Total balls", totalBalls)
-                telemetry.addData("Purple", "count=$yellowCount x=$yellowX y=$yellowY")
+            val ballPositions: List<BallPosition> = points.map { pair ->
+                val tx = pair[0]
+                val ty = pair[1]
+
+                val angleToTargetRadians = toRadians(CAMERA_ANGLE_DEGREES + ty)
+                val forward = (BALL_HEIGHT_INCHES - CAMERA_HEIGHT_INCHES) / tan(angleToTargetRadians)
+                val lateral = forward * tan(toRadians(tx))
+                val distance = sqrt(forward * forward + lateral * lateral)
+                BallPosition(forward, lateral, distance)
             }
-
-            telemetry.addData("Closest ball tx", tx)
-            telemetry.addData("Closest ball ty", ty)
-        } else {
-            telemetry.addData("Limelight", "no valid result")
+            return ballPositions
         }
-
-        telemetry.update()
+        return emptyList()
     }
+
+
 
     enum class LimelightState {
         ON, OFF
