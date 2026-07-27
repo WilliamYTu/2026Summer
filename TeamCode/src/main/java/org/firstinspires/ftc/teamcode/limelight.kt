@@ -19,10 +19,10 @@ import kotlin.math.sqrt
 class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) {
     private lateinit var limelight: Limelight3A
     private lateinit var imu: IMU
-    @JvmField var servoPos = 500.0
-    private  val cameraHeightInches = 8.0
-    private  val cameraAngleDegrees = 0.0
-    private  val ballHeightInches = 2.0     // measure from center of the ball to ground
+    @JvmField var servoPos = 0.2
+    private  val cameraHeightInches = 11.0
+    private  val cameraAngleDegrees = -16.0
+    private  val ballHeightInches = 1.5     // measure from center of the ball to ground
     private  val safety = -999.0
     // private val k = 75.78304131
     var state = LimelightState.OFF
@@ -34,7 +34,6 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
 
     fun initLimelight() {
         limelight = hardwareMap.get(Limelight3A::class.java, "Ethernet Device")
-
         limelight.pipelineSwitch(2)
 
         limelightServoPos(servoPos)
@@ -80,9 +79,9 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
     data class BallPosition(val forward: Double, val lateral: Double, val distance: Double)
 
     fun displacementFromAngles(): List<BallPosition> {
-        val result: LLResult? = limelight.getLatestResult()
-
-        if (result != null && result.isValid) {
+        val result: LLResult? = limelight.latestResult
+        // limelight.updatePythonInputs()
+        if (result != null) {
             val pythonOutput = result.pythonOutput ?: return emptyList()
 
             val points = pythonOutput.take(8)
@@ -102,6 +101,10 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
             return ballPositions
         }
         return emptyList()
+    }
+
+    fun getlatestResult(): LLResult? {
+        return limelight.latestResult
     }
 
     fun returnTelemetry(){

@@ -15,18 +15,51 @@ class Test : LinearOpMode() {
 
         while (opModeIsActive()) {
             limelight.getBallNumber()
-            if (gamepad1.dpad_down){
-                robot.changeLimelightPos(-100.0)
+            if (gamepad1.a){
+                robot.changeLimelightPos(-0.1)
             }
-            if (gamepad1.dpad_up){
-                robot.changeLimelightPos(100.0)
+            if (gamepad1.y){
+                robot.changeLimelightPos(0.1)
             }
             if (gamepad1.x){
                 robot.limelightToggle()
             }
 
+            val result = limelight.displacementFromAngles()
+
+
             telemetry.addData("Servo position", limelight.getServoPosition())
-            limelight.returnTelemetry()
+
+            val rawResult = limelight.getlatestResult()
+            telemetry.addData("Valid", rawResult?.isValid)
+            telemetry.update()
+
+            val firstBall = result.getOrNull(0)
+            val secondBall = result.getOrNull(1)
+            val thirdBall = result.getOrNull(2)
+            val fourthBall = result.getOrNull(3)
+
+
+            if (firstBall != null) {
+                telemetry.addData("Forward1: ", firstBall.forward)
+                telemetry.addData("Lateral1: ", firstBall.lateral)
+                telemetry.addData("Distance1: ", firstBall.distance)
+            }
+            if (secondBall != null) {
+                telemetry.addData("Forward2: ", secondBall.forward)
+                telemetry.addData("Lateral2: ", secondBall.lateral)
+                telemetry.addData("Distance2: ", secondBall.distance)
+            }
+            if (thirdBall != null) {
+                telemetry.addData("Forward3: ", thirdBall.forward)
+                telemetry.addData("Lateral3: ", thirdBall.lateral)
+                telemetry.addData("Distance3: ", thirdBall.distance)
+            }
+            if (fourthBall != null) {
+                telemetry.addData("Forward4: ", fourthBall.forward)
+                telemetry.addData("Lateral4: ", fourthBall.lateral)
+                telemetry.addData("Distance4: ", fourthBall.distance)
+            }
             telemetry.update()
         }
     }
