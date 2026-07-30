@@ -65,12 +65,12 @@ public class Constants {
     public static TwoWheelConstants localizerConstants = new TwoWheelConstants()
             .forwardEncoder_HardwareMapName("bl")
             .strafeEncoder_HardwareMapName("fr")
-            .forwardEncoderDirection(Encoder.FORWARD)
-            .strafeEncoderDirection(Encoder.FORWARD)
-            .forwardPodY(0.0)
+            .forwardEncoderDirection(Encoder.REVERSE)
+            .strafeEncoderDirection(Encoder.REVERSE)
+            .forwardPodY(7.0)
             .strafePodX(0.0)
-            .forwardTicksToInches(0.00193386482)
-            .strafeTicksToInches(0.00195054024)
+            .forwardTicksToInches(0.0014512057)
+            .strafeTicksToInches(0.007273707)
             .IMU_HardwareMapName("imu")
             .IMU_Orientation(
                     new RevHubOrientationOnRobot(

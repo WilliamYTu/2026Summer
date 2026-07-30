@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Limelight
 @Autonomous(name = "Ball Collector Auto")
 class BallCollectorAuto : LinearOpMode() {
 
-    private val startPose = Pose(72.0, 72.0, 0.0)
+    private val startPose = Pose(0.0, 0.0, 0.0)
 
     override fun runOpMode() {
         // hardwareMap and telemetry are inherited from LinearOpMode - no need to pass them in
