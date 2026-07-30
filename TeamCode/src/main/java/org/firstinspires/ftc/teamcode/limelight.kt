@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode
 
 import com.bylazar.configurables.annotations.Configurable
+import com.pedropathing.follower.Follower
+import com.pedropathing.geometry.BezierLine
+import com.pedropathing.geometry.Pose
+import com.pedropathing.paths.PathChain
 import com.qualcomm.hardware.limelightvision.LLResult
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
@@ -10,6 +14,9 @@ import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.hardware.ServoImplEx
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import java.lang.Math.toRadians
+import kotlin.math.cos
+import kotlin.math.hypot
+import kotlin.math.sin
 
 import kotlin.math.tan
 import kotlin.math.sqrt
@@ -21,7 +28,6 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
     private lateinit var imu: IMU
     @JvmField var servoPos = 0.2
     private  val cameraHeightInches = 11.0
-    private  val cameraAngleDegrees = -16.0
     private  val ballHeightInches = 1.5     // measure from center of the ball to ground
     private  val safety = -999.0
     // private val k = 75.78304131
@@ -93,9 +99,9 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
                 val ty = pair[1]
 
                 val angleToTargetRadians = toRadians(cameraAngleDegrees + ty)
-                val forward = (ballHeightInches - cameraHeightInches) / tan(angleToTargetRadians)
+                val forward = (cameraHeightInches - ballHeightInches) * tan(angleToTargetRadians)
                 val lateral = forward * tan(toRadians(tx))
-                val distance = sqrt(forward * forward + lateral * lateral)
+                val distance = sqrt(forward * forward + lateral * lateral)// distance formula
                 BallPosition(forward, lateral, distance)
             }
             return ballPositions
@@ -138,12 +144,72 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
         }
     }
 
+    fun robotRelativeToFieldPose(robotPose: Pose, forward: Double, lateral: Double): Pose {
+        val heading = robotPose.heading
+        val fieldX = robotPose.x + forward * cos(heading) - lateral * sin(heading)
+        val fieldY = robotPose.y + forward * sin(heading) + lateral * cos(heading)
+        return Pose(fieldX, fieldY)
+    }
+
+    fun shortestVisitOrder(start: Pose, points: List<Pose>): List<Pose> {
+        if (points.size <= 1) return points
+
+        var bestOrder = points
+        var bestDistance = Double.MAX_VALUE
+
+        for (order in permutations(points)) {
+            var distance = 0.0
+            var current = start
+            for (point in order) {
+                distance += hypot(point.x - current.x, point.y - current.y)
+                current = point
+            }
+            if (distance < bestDistance) {
+                bestDistance = distance
+                bestOrder = order
+            }
+        }
+        return bestOrder
+    }
+
+    fun <T> permutations(items: List<T>): List<List<T>> {
+        if (items.size <= 1) return listOf(items)
+        val result = mutableListOf<List<T>>()
+        for (i in items.indices) {
+            val remaining = items.toMutableList().apply { removeAt(i) }
+            for (perm in permutations(remaining)) {
+                result.add(listOf(items[i]) + perm)
+            }
+        }
+        return result
+    }
+
+    fun buildBallPathChain(follower: Follower, orderedBalls: List<Pose>): PathChain {
+        val builder = follower.pathBuilder()
+        var previous = follower.pose
+
+        for (ball in orderedBalls) {
+            builder.addPath(BezierLine(previous, ball))
+                .setTangentHeadingInterpolation()
+            previous = ball
+        }
+
+        return builder.build()
+    }
+
+
+
 
 
     enum class LimelightState {
         ON, OFF
     }
 
+
+    companion object {
+        @JvmField
+        var cameraAngleDegrees = 50.0
+    }
 
 
 }
