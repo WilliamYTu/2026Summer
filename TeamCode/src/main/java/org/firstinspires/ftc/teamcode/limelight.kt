@@ -208,7 +208,7 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
 
     companion object {
         @JvmField
-        var cameraAngleDegrees = 50.0
+        var cameraAngleDegrees = 63.0
     }
 
 
