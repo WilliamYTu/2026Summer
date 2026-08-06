@@ -26,7 +26,7 @@ import kotlin.math.sqrt
 class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) {
     private lateinit var limelight: Limelight3A
     private lateinit var imu: IMU
-    @JvmField var servoPos = 0.2
+
     private  val cameraHeightInches = 11.0
     private  val ballHeightInches = 1.5     // measure from center of the ball to ground
     private  val safety = -999.0
@@ -43,15 +43,6 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
         limelight.pipelineSwitch(2)
 
         limelightServoPos(servoPos)
-
-        imu = hardwareMap.get(IMU::class.java, "imu")
-
-        val revHubOrientationOnRobot = RevHubOrientationOnRobot(
-            RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-            RevHubOrientationOnRobot.UsbFacingDirection.UP
-        )
-
-        imu.initialize(IMU.Parameters(revHubOrientationOnRobot))
     }
 
     fun limelightServoPos(pos: Double){
@@ -208,7 +199,10 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
 
     companion object {
         @JvmField
-        var cameraAngleDegrees = 63.0
+        var cameraAngleDegrees = 75.0
+
+        @JvmField
+        var servoPos = 0.25
     }
 
 

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.control.FilteredPIDFCoefficients;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.follower.Follower;
@@ -14,48 +15,47 @@ import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-// import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
+import kotlin.jvm.JvmField;
+// import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 public class Constants {
     TwoWheelConstants myConstants = new TwoWheelConstants();
 
-
-
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(13.61)
-
-
-            .lateralZeroPowerAcceleration(-8)
-            .forwardZeroPowerAcceleration(-7)
-
-            .headingPIDFCoefficients(new PIDFCoefficients(1, 0.0, 0.05, 0.05))
-            .useSecondaryHeadingPIDF(true)
-            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(0.8, 0.0, 0.1, 0.02))
-            .headingPIDFSwitch(0.7670796327)
-
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0, 0.015, 0.05))
+            .forwardZeroPowerAcceleration(-39.68251553190508)
+            .lateralZeroPowerAcceleration(-50.35198018424342)
+            .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.1, 0.0, 0.01, 0.025))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.3, 0.0, 0.005, 0.04))
             .useSecondaryTranslationalPIDF(true)
-            .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.05, 0, 0.02, 0.02))
+            .translationalPIDFSwitch(6)
 
-            .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.01, 0.0, 0.0002, 0.6, 0.01))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.04, 0.0, 0.00001, 0.6, 0.02))
+
+            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(1.0, 0.0, 0.1, 0.01))
+            .headingPIDFCoefficients(new PIDFCoefficients(5, 0.0, 0.1, 0.02))
+            .useSecondaryHeadingPIDF(true)
+            .headingPIDFSwitch(0.5580796327)
+
+            .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.004, 0.0, 0.00035      , 0.6, 0.03))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.05, 0.0, 0.00001, 0.6, 0.02))
             .useSecondaryDrivePIDF(true)
-            .drivePIDFSwitch(20)
+            .drivePIDFSwitch(30)
+
+            .mass(11.3398);
 
 
-            ;
+
 
 
 
     public static MecanumConstants driveConstants = new MecanumConstants()
-            .maxPower(1)
+            .maxPower(0.5)
             .rightFrontMotorName("fr")
             .rightRearMotorName("br")
             .leftRearMotorName("bl")
             .leftFrontMotorName("fl")
-            .xVelocity(78.00285315556257)
-            .yVelocity(62.8918609819)
+            .xVelocity(73.38503752726977)
+            .yVelocity(56.583242400627924)
             .useBrakeModeInTeleOp(true)
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE) //good
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE) //good
@@ -67,14 +67,14 @@ public class Constants {
             .strafeEncoder_HardwareMapName("fr")
             .forwardEncoderDirection(Encoder.REVERSE)
             .strafeEncoderDirection(Encoder.REVERSE)
-            .forwardPodY(7.0)
+            .forwardPodY(-6.75)
             .strafePodX(0.0)
-            .forwardTicksToInches(0.0014512057)
-            .strafeTicksToInches(0.007273707)
-            .IMU_HardwareMapName("imu")
+            .forwardTicksToInches(5.220301935654224E-4)
+            .strafeTicksToInches(0.002336108777590704)
+            .IMU_HardwareMapName("revimu")
             .IMU_Orientation(
                     new RevHubOrientationOnRobot(
-                            RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                            RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                             RevHubOrientationOnRobot.UsbFacingDirection.UP
                     )
 
@@ -95,4 +95,6 @@ public class Constants {
                 .twoWheelLocalizer(localizerConstants)
                 .build();
     }
+
+
 }

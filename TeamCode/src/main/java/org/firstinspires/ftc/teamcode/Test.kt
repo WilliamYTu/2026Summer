@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode
 
+import com.pedropathing.follower.Follower
+import com.pedropathing.geometry.Pose
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants
 
 @TeleOp(name = "Ball Detector")
 class Test : LinearOpMode() {
@@ -11,7 +14,10 @@ class Test : LinearOpMode() {
         val robot = Robot(hardwareMap, telemetry)
         limelight.initLimelight()
         limelight.start()
+        val follower: Follower = Constants.createFollower(hardwareMap)
+        follower.setStartingPose(Pose(0.0, 0.0, 0.0))
         waitForStart()
+
 
         while (opModeIsActive()) {
             limelight.getBallNumber()
@@ -44,6 +50,7 @@ class Test : LinearOpMode() {
                 telemetry.addData("Forward1: ", firstBall.forward)
                 telemetry.addData("Lateral1: ", firstBall.lateral)
                 telemetry.addData("Distance1: ", firstBall.distance)
+                telemetry.addData("Coordinates1: ", limelight.robotRelativeToFieldPose(follower.pose, firstBall.forward, firstBall.lateral))
             }
             if (secondBall != null) {
                 telemetry.addData("Forward2: ", secondBall.forward)
