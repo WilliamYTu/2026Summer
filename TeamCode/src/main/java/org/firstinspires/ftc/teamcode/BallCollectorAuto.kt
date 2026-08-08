@@ -3,9 +3,13 @@ package org.firstinspires.ftc.teamcode
 import com.pedropathing.follower.Follower
 import com.pedropathing.geometry.BezierLine
 import com.pedropathing.geometry.Pose
+import com.pedropathing.paths.PathChain
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants
+import kotlin.math.cos
+import kotlin.math.hypot
+import kotlin.math.sin
 
 @Autonomous(name = "Ball Collector Auto")
 class BallCollectorAuto : LinearOpMode() {
@@ -16,7 +20,7 @@ class BallCollectorAuto : LinearOpMode() {
         // hardwareMap and telemetry are inherited from LinearOpMode - no need to pass them in
         val limelight = Limelight(hardwareMap, telemetry)
 
-        val follower: Follower = Constants.createFollower(hardwareMap)
+        val follower = Constants.createFollower(hardwareMap)
         follower.setStartingPose(startPose)
 
 
@@ -32,8 +36,7 @@ class BallCollectorAuto : LinearOpMode() {
         if (isStopRequested) return
 
         if (limelight.displacementFromAngles().isEmpty()) {
-            telemetry.addLine("No balls detected - nothing to do")
-            telemetry.update()
+            requestOpModeStop()
         } else {
 
             val fieldBalls: List<Pose> = limelight.displacementFromAngles().map { ball ->
@@ -48,11 +51,11 @@ class BallCollectorAuto : LinearOpMode() {
                 telemetry.addData("X", follower.pose.x)
                 telemetry.addData("Y", follower.pose.y)
                 telemetry.addData("Heading", follower.pose.heading)
+                telemetry.addData("point 1 x", orderedBalls[0].x)
+                telemetry.addData("point 1 y", orderedBalls[0].y)
                 telemetry.update()
             }
         }
-        telemetry.addLine("Done - all balls visited")
-        telemetry.update()
         limelight.stop()
     }
 }

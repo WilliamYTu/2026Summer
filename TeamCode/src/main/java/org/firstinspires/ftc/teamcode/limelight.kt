@@ -91,7 +91,7 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
 
                 val angleToTargetRadians = toRadians(cameraAngleDegrees + ty)
                 val forward = (cameraHeightInches - ballHeightInches) * tan(angleToTargetRadians)
-                val lateral = forward * tan(toRadians(tx))
+                val lateral = -(forward * tan(toRadians(tx)))
                 val distance = sqrt(forward * forward + lateral * lateral)// distance formula
                 BallPosition(forward, lateral, distance)
             }
@@ -188,10 +188,6 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
         return builder.build()
     }
 
-
-
-
-
     enum class LimelightState {
         ON, OFF
     }
@@ -199,7 +195,7 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
 
     companion object {
         @JvmField
-        var cameraAngleDegrees = 75.0
+        var cameraAngleDegrees = 72.0
 
         @JvmField
         var servoPos = 0.25

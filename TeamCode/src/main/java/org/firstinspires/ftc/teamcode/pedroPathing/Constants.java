@@ -20,7 +20,7 @@ import kotlin.jvm.JvmField;
 // import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 public class Constants {
-    TwoWheelConstants myConstants = new TwoWheelConstants();
+    // TwoWheelConstants myConstants = new TwoWheelConstants();
 
     public static FollowerConstants followerConstants = new FollowerConstants()
             .forwardZeroPowerAcceleration(-39.68251553190508)
@@ -69,7 +69,7 @@ public class Constants {
             .strafeEncoderDirection(Encoder.REVERSE)
             .forwardPodY(-6.75)
             .strafePodX(0.0)
-            .forwardTicksToInches(5.220301935654224E-4)
+            .forwardTicksToInches(0.002336108777590704)
             .strafeTicksToInches(0.002336108777590704)
             .IMU_HardwareMapName("revimu")
             .IMU_Orientation(
