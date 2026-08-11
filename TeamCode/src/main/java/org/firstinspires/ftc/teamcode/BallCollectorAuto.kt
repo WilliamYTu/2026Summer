@@ -7,6 +7,7 @@ import com.pedropathing.paths.PathChain
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants
+import org.firstinspires.ftc.teamcode.Drawing
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.sin
@@ -23,7 +24,8 @@ class BallCollectorAuto : LinearOpMode() {
         val follower = Constants.createFollower(hardwareMap)
         follower.setStartingPose(startPose)
 
-
+        val drawing = Drawing()
+        drawing.init()
 
         limelight.initLimelight()
 
@@ -47,6 +49,7 @@ class BallCollectorAuto : LinearOpMode() {
             follower.followPath(pathChain)
 
             while (opModeIsActive()) {
+                drawing.drawDebug(follower)
                 follower.update()
                 telemetry.addData("X", follower.pose.x)
                 telemetry.addData("Y", follower.pose.y)
