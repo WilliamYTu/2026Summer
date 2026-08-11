@@ -4,6 +4,7 @@ import com.bylazar.configurables.annotations.Configurable
 import com.pedropathing.follower.Follower
 import com.pedropathing.geometry.BezierLine
 import com.pedropathing.geometry.Pose
+import com.pedropathing.geometry.BezierPoint
 import com.pedropathing.paths.PathChain
 import com.qualcomm.hardware.limelightvision.LLResult
 import com.qualcomm.hardware.limelightvision.Limelight3A
@@ -204,6 +205,22 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
 
         return builder.build()
     }
+
+    fun averagedBallPose(limelight: Limelight, robotPose: Pose, samples: Int): Pose? {
+        val readings = mutableListOf<Pose>()
+        repeat(samples) {
+            val detections = limelight.displacementFromAngles()
+            if (detections.isNotEmpty()) {
+                val closest = detections.minByOrNull { hypot(it.forward, it.lateral) }!!
+                readings.add(limelight.intakeRelativeToFieldPose(robotPose, closest.forward, closest.lateral))
+            }
+        }
+        if (readings.isEmpty()) return null
+        val avgX = readings.map { it.x }.average()
+        val avgY = readings.map { it.y }.average()
+        return Pose(avgX, avgY, readings.last().heading)
+    }
+
 
     enum class LimelightState {
         ON, OFF

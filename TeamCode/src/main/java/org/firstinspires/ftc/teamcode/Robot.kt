@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode
 import com.bylazar.configurables.annotations.Configurable
+import com.pedropathing.follower.Follower
+import com.pedropathing.geometry.BezierLine
+import com.pedropathing.geometry.Pose
+import com.pedropathing.paths.PathChain
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.Telemetry
 
@@ -20,5 +24,12 @@ class Robot(private val hardwareMap: HardwareMap, val telemetry: Telemetry) {
     fun changeLimelightPos(change: Double){
         val previousPos = limelight.getServoPosition()
         limelight.limelightServoPos(previousPos + change)
+    }
+
+    fun buildLineTo(follower: Follower, target: Pose): PathChain {
+        return follower.pathBuilder()
+            .addPath(BezierLine(follower.pose, target))
+            .setLinearHeadingInterpolation(follower.pose.heading, target.heading)
+            .build()
     }
 }
