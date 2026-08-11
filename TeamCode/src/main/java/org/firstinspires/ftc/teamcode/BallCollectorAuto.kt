@@ -28,10 +28,10 @@ class BallCollectorAuto : LinearOpMode() {
         val drawing = Drawing()
         drawing.init()
 
-        val retargetIntervalMs = 300L      // how often we're allowed to re-issue a path
+        val retargetIntervalMs = 500L      // how often we're allowed to re-issue a path
         val retargetThreshold = 1.5        // inches of drift needed before we bother re-pathing
-        val lockDistance = 8.0             // once this close to target, stop re-targeting
-        val filterSamples = 3
+        val lockDistance = 8.0             // once this close to target, stop re-targeting, in inches
+        val filterSamples = 5
 
         limelight.initLimelight()
 
@@ -47,7 +47,7 @@ class BallCollectorAuto : LinearOpMode() {
             requestOpModeStop()
             return
         }
-        follower.setMaxPower(0.3)
+        follower.setMaxPower(0.5)
 
 
         val initialFieldBalls: List<Pose> = limelight.displacementFromAngles().map { ball ->

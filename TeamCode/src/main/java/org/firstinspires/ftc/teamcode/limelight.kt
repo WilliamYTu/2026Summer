@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.hardware.ServoImplEx
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import java.lang.Math.toRadians
+import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.sin
@@ -157,7 +158,10 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
 
         val fieldX = robotPose.x + dx * scale
         val fieldY = robotPose.y + dy * scale
-        return Pose(fieldX, fieldY)
+
+        val targetHeading = if (dist > 1e-6) atan2(dy, dx) else robotPose.heading
+
+        return Pose(fieldX, fieldY, targetHeading)
     }
 
     fun shortestVisitOrder(start: Pose, points: List<Pose>): List<Pose> {
