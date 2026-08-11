@@ -225,6 +225,19 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
         return Pose(avgX, avgY, readings.last().heading)
     }
 
+    fun applyLookaheadHeadings(balls: MutableList<Pose>) {
+        for (i in balls.indices) {
+            val current = balls[i]
+            val heading = if (i < balls.size - 1) {
+                val next = balls[i + 1]
+                atan2(next.y - current.y, next.x - current.x)
+            } else {
+                current.heading
+            }
+            balls[i] = Pose(current.x, current.y, heading)
+        }
+    }
+
 
     enum class LimelightState {
         ON, OFF
