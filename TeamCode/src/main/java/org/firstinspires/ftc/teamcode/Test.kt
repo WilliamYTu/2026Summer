@@ -74,7 +74,6 @@ class Test : LinearOpMode() {
                 telemetry.addData("Lateral4: ", fourthBall.lateral)
                 telemetry.addData("Distance4: ", fourthBall.distance)
             }
-
             telemetry.update()
         }
     }

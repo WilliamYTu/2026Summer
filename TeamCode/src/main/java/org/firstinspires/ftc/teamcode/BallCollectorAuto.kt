@@ -15,7 +15,7 @@ import kotlin.math.sin
 @Autonomous(name = "Ball Collector Auto")
 class BallCollectorAuto : LinearOpMode() {
 
-    private val startPose = Pose(0.0, 0.0, 0.0)
+    private val startPose = Pose(72.0, 72.0, 0.0)
 
     override fun runOpMode() {
         // hardwareMap and telemetry are inherited from LinearOpMode - no need to pass them in
@@ -40,9 +40,10 @@ class BallCollectorAuto : LinearOpMode() {
         if (limelight.displacementFromAngles().isEmpty()) {
             requestOpModeStop()
         } else {
-
+            follower.setMaxPower(0.3)
             val fieldBalls: List<Pose> = limelight.displacementFromAngles().map { ball ->
-                limelight.robotRelativeToFieldPose(follower.pose, ball.forward, ball.lateral)
+                follower.update()
+                limelight.intakeRelativeToFieldPose(follower.pose, ball.forward, ball.lateral)
             }
             val orderedBalls = limelight.shortestVisitOrder(follower.pose, fieldBalls)
             val pathChain = limelight.buildBallPathChain(follower, orderedBalls)

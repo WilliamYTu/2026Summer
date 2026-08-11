@@ -142,6 +142,23 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
         return Pose(fieldX, fieldY)
     }
 
+    fun intakeRelativeToFieldPose(robotPose: Pose, forward: Double, lateral: Double, pullBackDistance: Double = 0.0): Pose {
+        val heading = robotPose.heading
+        val targetX = robotPose.x + forward * cos(heading) - lateral * sin(heading)
+        val targetY = robotPose.y + forward * sin(heading) + lateral * cos(heading)
+
+        val dx = targetX - robotPose.x
+        val dy = targetY - robotPose.y
+        val dist = hypot(dx, dy)
+
+        // Scale the vector so its length is reduced by pullBackDistance, clamped at 0
+        val scale = if (dist > 1e-6) (dist - pullBackDistance).coerceAtLeast(0.0) / dist else 0.0
+
+        val fieldX = robotPose.x + dx * scale
+        val fieldY = robotPose.y + dy * scale
+        return Pose(fieldX, fieldY)
+    }
+
     fun shortestVisitOrder(start: Pose, points: List<Pose>): List<Pose> {
         if (points.size <= 1) return points
 

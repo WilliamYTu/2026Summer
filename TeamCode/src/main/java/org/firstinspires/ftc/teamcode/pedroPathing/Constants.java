@@ -49,7 +49,7 @@ public class Constants {
 
 
     public static MecanumConstants driveConstants = new MecanumConstants()
-            .maxPower(0.5)
+            .maxPower(0.3)
             .rightFrontMotorName("fr")
             .rightRearMotorName("br")
             .leftRearMotorName("bl")
@@ -69,7 +69,7 @@ public class Constants {
             .strafeEncoderDirection(Encoder.REVERSE)
             .forwardPodY(-6.75)
             .strafePodX(0.0)
-            .forwardTicksToInches(0.002336108777590704)
+            .forwardTicksToInches(0.002536108777590704)
             .strafeTicksToInches(0.002336108777590704)
             .IMU_HardwareMapName("revimu")
             .IMU_Orientation(
