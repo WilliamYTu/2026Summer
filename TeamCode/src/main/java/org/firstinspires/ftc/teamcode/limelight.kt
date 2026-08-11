@@ -144,7 +144,7 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
         return Pose(fieldX, fieldY)
     }
 
-    fun intakeRelativeToFieldPose(robotPose: Pose, forward: Double, lateral: Double, pullBackDistance: Double = 0.0): Pose {
+    fun intakeRelativeToFieldPose(robotPose: Pose, forward: Double, lateral: Double, pullBackDistance: Double = 3.0): Pose {
         val heading = robotPose.heading
         val targetX = robotPose.x + forward * cos(heading) - lateral * sin(heading)
         val targetY = robotPose.y + forward * sin(heading) + lateral * cos(heading)
@@ -196,7 +196,7 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
         }
         return result
     }
-
+    /*
     fun buildBallPathChain(follower: Follower, orderedBalls: List<Pose>): PathChain {
         val builder = follower.pathBuilder()
         var previous = follower.pose
@@ -237,6 +237,8 @@ class Limelight(private val hardwareMap: HardwareMap, val telemetry: Telemetry) 
             balls[i] = Pose(current.x, current.y, heading)
         }
     }
+
+     */
 
 
     enum class LimelightState {
